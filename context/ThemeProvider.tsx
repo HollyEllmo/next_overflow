@@ -10,13 +10,25 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState("light"); // Установите начальное значение
+  const [mode, setMode] = useState("");
+
+  const handleThemeChange = () => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme:dark)").matches)
+    ) {
+      setMode("dark");
+      document.documentElement.classList.add("dark");
+    } else {
+      setMode("light");
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   useEffect(() => {
-    // Обновите классы для documentElement
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(mode);
-  }, [mode]); // Зависимость от mode
+    handleThemeChange();
+  }, [mode]);
 
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
