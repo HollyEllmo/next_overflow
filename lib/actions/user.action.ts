@@ -57,32 +57,33 @@ export async function updateUser(params: UpdateUserParams) {
 
 export async function deleteUser(params: DeleteUserParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { clerkId } = params;
 
-    const user = await User.findOneAndDelete({ clerkId });
-
+    // Сначала находим пользователя по clerkId
+    const user = await User.findOne({ clerkId });
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Delete user from database
-    // and questions, answers, comments, etc.
+    // Теперь, когда у нас есть пользователь, мы можем получить его _id
+    const userId = user._id;
 
-    // get user question ids
-    // const userQuestionIds = await Question.find({ author: user._id}).distinct('_id');
+    // Далее удаляем вопросы, связанные с пользователем
+    await Question.deleteMany({ author: userId });
 
-    // delete user questions
-    await Question.deleteMany({ author: user._id });
+    // TODO: удаление ответов, комментариев и других связанных данных
 
-    // TODO: delete user answers, comments, etc.
+    // И, наконец, удаляем самого пользователя
+    const deletedUser = await User.findByIdAndDelete(userId);
 
-    const deletedUser = await User.findByIdAndDelete(user._id);
+    // Вызываем revalidatePath, если это необходимо
+    // revalidatePath(path);
 
     return deletedUser;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
