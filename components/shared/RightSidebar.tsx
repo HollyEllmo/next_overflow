@@ -2,33 +2,12 @@ import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import RenderTag from "./RenderTag";
+import { getHotQuestions } from "@/lib/actions/question.action";
+import { getTopPopularTags } from "@/lib/actions/tag.actions";
 
-const RightSidebar = () => {
-  const hotQuestions = [
-    {
-      _id: "1",
-      title:
-        "Would it be appropriate to point out an error in another paper during a referee report",
-    },
-    { _id: "2", title: "How can an airconditioning machine exist?" },
-    {
-      _id: "3",
-      title: "Interrogated every time crossing UK Border as citizen",
-    },
-    { _id: "4", title: "Low digit addition generator" },
-    {
-      _id: "5",
-      title: "What is an example of 3 numbers that do not make up a vector?",
-    },
-  ];
-
-  const popularTags = [
-    { _id: "1", name: "javascript", totalQuestions: 5 },
-    { _id: "2", name: "react", totalQuestions: 4 },
-    { _id: "3", name: "nextjs", totalQuestions: 5 },
-    { _id: "4", name: "vue", totalQuestions: 2 },
-    { _id: "5", name: "recoil", totalQuestions: 3 },
-  ];
+const RightSidebar = async () => {
+  const hotQuestions = await getHotQuestions();
+  const popularTags = await getTopPopularTags();
 
   return (
     <section className="background-light900_dark200 light-border sticky right-0 top-0 flex h-screen flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden lg:w-[266px] custom-scrollbar w-[350px]">
@@ -37,7 +16,7 @@ const RightSidebar = () => {
         <div className="mt-7 flex w-full flex-col gap-[30px]">
           {hotQuestions.map((question) => (
             <Link
-              href={`/questions/${question._id}`}
+              href={`/question/${question._id}`}
               key={question._id}
               className="flex cursor-pointer items-center justify-between gap-7"
             >
@@ -63,7 +42,7 @@ const RightSidebar = () => {
               key={tag._id}
               _id={tag._id}
               name={tag.name}
-              totalQuestions={tag.totalQuestions}
+              totalQuestions={tag.numberOfQuestions}
               showCount
             />
           ))}

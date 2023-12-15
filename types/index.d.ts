@@ -20,6 +20,35 @@ export interface Job {
   job_country?: string;
 }
 
+interface Tag {
+  _id: string;
+  name: string;
+}
+
+interface Answer {
+  _id: string;
+}
+
+interface Author {
+  _id: string;
+  name: string;
+  picture: string;
+  clerkId: string;
+}
+
+export interface Question {
+  _id: string;
+  title: string;
+  content: string;
+  tags: Tag[];
+  views: number;
+  upvotes: string[];
+  downvotes: string[];
+  author: Author;
+  answers: Answer[];
+  createdAt: Date;
+}
+
 export interface Country {
   name: {
     common: string;
@@ -46,4 +75,3 @@ export interface BadgeCounts {
 }
 
 export type BadgeCriteriaType = keyof typeof BADGE_CRITERIA;
-
